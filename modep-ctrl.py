@@ -12,7 +12,7 @@ SERVER_URI         = "http://localhost:80/"
 
 LOCAL_STORAGE      = os.path.expanduser("~/.modep/")
 LAST_PEDALBOARD    = LOCAL_STORAGE + "last_board"
-DEFAULT_PEDALBOARD = "/root/.pedalboards/default.pedalboard" # /usr/local/modep/.pedalboards
+DEFAULT_PEDALBOARD = "/usr/local/modep/.pedalboards/default.pedalboard"
 
 if not os.path.exists(LOCAL_STORAGE):
 	try:
@@ -53,9 +53,8 @@ def get_pedalboards(bank_id):
 
 	try:
 		r = requests.get(SERVER_URI + "banks/")
-
 		if r.status_code == 200:
-			j = json.loads(r.content)
+			j = r.json()
 			for i in j[bank_id]["pedalboards"]:
 				result.append(i["bundle"])
 	finally:
