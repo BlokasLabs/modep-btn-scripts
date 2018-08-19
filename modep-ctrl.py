@@ -139,7 +139,6 @@ elif sys.argv[1] == "prev":
 elif sys.argv[1] == "bypass":
 	bypass_toggle()
 elif sys.argv[1] == "list":
-	print("list")
 	for board in get_pedalboards(0):
 		print(board)
 elif sys.argv[1] == "index":
