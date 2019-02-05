@@ -149,6 +149,17 @@ def get_board_index_by_bundle(board_bundle):
 			return index
 	return None
 
+def load_board_by_name(board_name):
+        bundle = board_name_bundle(board_name)
+	if bundle:
+		print("Switching %s -> %s" % (get_current_pedalboard(), bundle))
+		load_index(get_board_index_by_bundle(bundle))
+	else:
+		print("No board found for %s!" % (board_name))
+
+def list_pedalboards():
+	for pb in get_pedalboards():
+		print pb
 
 if sys.argv[1] == "next":
 	load_next()
@@ -157,14 +168,10 @@ elif sys.argv[1] == "prev":
 elif sys.argv[1] == "bypass":
 	bypass_toggle()
 elif sys.argv[1] == "list":
-	for pb in get_pedalboards():
-		print pb
+	list_pedalboards()
 elif sys.argv[1] == "index":
 	load_index(int(sys.argv[2]))
 elif sys.argv[1] == "current":
 	print(get_current_pedalboard())
 elif sys.argv[1] == "load-board":
-        bundle = board_name_bundle(sys.argv[2])
-	if bundle:
-		print("Switching %s -> %s" % (get_current_pedalboard(), bundle))
-		load_index(get_board_index_by_bundle(bundle))
+	load_board_by_name(sys.argv[2])
