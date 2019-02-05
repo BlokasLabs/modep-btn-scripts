@@ -146,8 +146,8 @@ elif sys.argv[1] == "index":
 	load_index(int(sys.argv[2]))
 elif sys.argv[1] == "current":
 	print(get_current_pedalboard())
-	#curl localhost:80/pedalboard/current
 elif sys.argv[1] == "load-board":
+	# regex to look for boards by short name or full (bundle) path
         want_board = "/" + sys.argv[2] + ".pedalboard$" + "|^" + sys.argv[2] + "$"
 	# pedalboards are saved/returned in unicode, regex needs to be aware
 	regex = re.compile(want_board, re.UNICODE)
