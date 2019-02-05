@@ -133,6 +133,23 @@ def bypass_toggle():
 		else:
 			print("Didn't find any stored board")
 
+def board_name_bundle(board_name):
+	# regex to look for boards by short name or full (bundle) path
+	pattern = "/" + board_name + ".pedalboard$" + "|^" + board_name + "$"
+	# pedalboards are saved/returned in unicode, regex needs to be aware
+	regex = re.compile(pattern, re.UNICODE)
+	for bundle in get_pedalboards():
+		if re.search(regex, bundle):
+			return(bundle)
+	return None
+
+def get_board_index_by_bundle(board_bundle):
+	for index, bundle in enumerate(get_pedalboards()):
+		if bundle == board_bundle:
+			return index
+	return None
+
+
 if sys.argv[1] == "next":
 	load_next()
 elif sys.argv[1] == "prev":
@@ -147,11 +164,7 @@ elif sys.argv[1] == "index":
 elif sys.argv[1] == "current":
 	print(get_current_pedalboard())
 elif sys.argv[1] == "load-board":
-	# regex to look for boards by short name or full (bundle) path
-        want_board = "/" + sys.argv[2] + ".pedalboard$" + "|^" + sys.argv[2] + "$"
-	# pedalboards are saved/returned in unicode, regex needs to be aware
-	regex = re.compile(want_board, re.UNICODE)
-        for index, board in enumerate(get_pedalboards()):
-		if re.search(regex, board):
-			print("Switching %s -> %s" % (get_current_pedalboard(),board))
-			load_index(index)
+        bundle = board_name_bundle(sys.argv[2])
+	if bundle:
+		print("Switching %s -> %s" % (get_current_pedalboard(), bundle))
+		load_index(get_board_index_by_bundle(bundle))
