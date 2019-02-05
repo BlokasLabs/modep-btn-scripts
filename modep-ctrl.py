@@ -4,6 +4,7 @@ import requests
 import json
 import sys
 import os
+import re
 
 if len(sys.argv) != 2 and len(sys.argv) != 3:
 	exit(1)
@@ -48,15 +49,15 @@ def set_default_pedalboard():
 	except:
 		print("Failed to set default pedalboard.")
 
-def get_pedalboards(bank_id):
+def get_pedalboards():
 	result = []
 
 	try:
-		r = requests.get(SERVER_URI + "banks/")
+		r = requests.get(SERVER_URI + "pedalboard/list")
 		if r.status_code == 200:
 			j = r.json()
-			for i in j[bank_id]["pedalboards"]:
-				result.append(i["bundle"])
+			for i in j:
+				result.append(i[u'bundle'])
 	finally:
 		return result
 
@@ -80,7 +81,7 @@ def get_current_pedalboard_index(pedalboards, current):
 		return -1
 
 def load_next():
-	boards = get_pedalboards(0)
+	boards = get_pedalboards()
 	if len(boards) == 0:
 		print("No banks or pedalboards!")
 		return
@@ -91,7 +92,7 @@ def load_next():
 	set_pedalboard(boards[next])
 
 def load_prev():
-	boards = get_pedalboards(0)
+	boards = get_pedalboards()
 	if len(boards) == 0:
 		print("No banks or pedalboards!")
 		return
@@ -105,7 +106,7 @@ def load_prev():
 	set_pedalboard(boards[prev])
 
 def load_index(index):
-	boards = get_pedalboards(0)
+	boards = get_pedalboards()
 	if len(boards) == 0:
 		print("No banks or pedalboards!")
 		exit(1)
@@ -139,7 +140,18 @@ elif sys.argv[1] == "prev":
 elif sys.argv[1] == "bypass":
 	bypass_toggle()
 elif sys.argv[1] == "list":
-	for board in get_pedalboards(0):
-		print(board)
+	for pb in get_pedalboards():
+		print pb
 elif sys.argv[1] == "index":
 	load_index(int(sys.argv[2]))
+elif sys.argv[1] == "current":
+	print(get_current_pedalboard())
+	#curl localhost:80/pedalboard/current
+elif sys.argv[1] == "load-board":
+        want_board = "/" + sys.argv[2] + ".pedalboard$" + "|^" + sys.argv[2] + "$"
+	# pedalboards are saved/returned in unicode, regex needs to be aware
+	regex = re.compile(want_board, re.UNICODE)
+        for index, board in enumerate(get_pedalboards()):
+		if re.search(regex, board):
+			print("Switching %s -> %s" % (get_current_pedalboard(),board))
+			load_index(index)
