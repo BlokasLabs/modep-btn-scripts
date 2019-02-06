@@ -133,7 +133,6 @@ def load_index(index, load_all):
 		exit(1)
 
 	print("Switching %s -> %s" % (get_current_pedalboard(), boards[index]))
-	#print("Switching to %s" % (boards[index]))
 	set_pedalboard(boards[index])
 
 def bypass_toggle():
