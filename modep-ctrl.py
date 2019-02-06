@@ -14,6 +14,7 @@ SERVER_URI         = "http://localhost:80/"
 LOCAL_STORAGE      = os.path.expanduser("~/.modep/")
 LAST_PEDALBOARD    = LOCAL_STORAGE + "last_board"
 DEFAULT_PEDALBOARD = "/usr/local/modep/.pedalboards/default.pedalboard"
+DEFAULT_BANK       = 0
 
 if not os.path.exists(LOCAL_STORAGE):
 	try:
@@ -49,7 +50,7 @@ def set_default_pedalboard():
 	except:
 		print("Failed to set default pedalboard.")
 
-def get_pedalboards():
+def get_all_pedalboards():
 	result = []
 
 	try:
@@ -57,7 +58,19 @@ def get_pedalboards():
 		if r.status_code == 200:
 			j = r.json()
 			for i in j:
-				result.append(i[u'bundle'])
+				result.append(i["bundle"])
+	finally:
+		return result
+
+def get_pedalboards(bank_id):
+	result = []
+
+	try:
+		r = requests.get(SERVER_URI + "banks/")
+		if r.status_code == 200:
+			j = r.json()
+			for i in j[bank_id]["pedalboards"]:
+				result.append(i["bundle"])
 	finally:
 		return result
 
@@ -81,7 +94,7 @@ def get_current_pedalboard_index(pedalboards, current):
 		return -1
 
 def load_next():
-	boards = get_pedalboards()
+	boards = get_pedalboards(DEFAULT_BANK)
 	if len(boards) == 0:
 		print("No banks or pedalboards!")
 		return
@@ -92,7 +105,7 @@ def load_next():
 	set_pedalboard(boards[next])
 
 def load_prev():
-	boards = get_pedalboards()
+	boards = get_pedalboards(DEFAULT_BANK)
 	if len(boards) == 0:
 		print("No banks or pedalboards!")
 		return
@@ -105,8 +118,12 @@ def load_prev():
 	print("Switching %s -> %s" % (currentName, boards[prev]))
 	set_pedalboard(boards[prev])
 
-def load_index(index):
-	boards = get_pedalboards()
+def load_index(index, load_all):
+	if load_all == 0:
+		boards = get_pedalboards(DEFAULT_BANK)
+	else:
+		boards = get_all_pedalboards()
+
 	if len(boards) == 0:
 		print("No banks or pedalboards!")
 		exit(1)
@@ -115,6 +132,8 @@ def load_index(index):
 		print("Index %d is out of range!" % index)
 		exit(1)
 
+	print("Switching %s -> %s" % (get_current_pedalboard(), boards[index]))
+	#print("Switching to %s" % (boards[index]))
 	set_pedalboard(boards[index])
 
 def bypass_toggle():
@@ -138,13 +157,13 @@ def board_name_bundle(board_name):
 	pattern = "/" + board_name + ".pedalboard$" + "|^" + board_name + "$"
 	# pedalboards are saved/returned in unicode, regex needs to be aware
 	regex = re.compile(pattern, re.UNICODE)
-	for bundle in get_pedalboards():
+	for bundle in get_all_pedalboards():
 		if re.search(regex, bundle):
 			return(bundle)
 	return None
 
 def get_board_index_by_bundle(board_bundle):
-	for index, bundle in enumerate(get_pedalboards()):
+	for index, bundle in enumerate(get_all_pedalboards()):
 		if bundle == board_bundle:
 			return index
 	return None
@@ -152,13 +171,25 @@ def get_board_index_by_bundle(board_bundle):
 def load_board_by_name(board_name):
         bundle = board_name_bundle(board_name)
 	if bundle:
-		print("Switching %s -> %s" % (get_current_pedalboard(), bundle))
-		load_index(get_board_index_by_bundle(bundle))
+		load_index(get_board_index_by_bundle(bundle), 1)
 	else:
 		print("No board found for %s!" % (board_name))
 
-def list_pedalboards():
-	for pb in get_pedalboards():
+def list_banks():
+	r = requests.get(SERVER_URI + "banks/")
+	if r.status_code == 200:
+		j = r.json()
+		for num, i in enumerate(j):
+			print("Bank " + str(num) + ": " + i["title"])
+			for k in i["pedalboards"]:
+				print("\t" + k["title"])
+
+def list_pedalboards(bank = DEFAULT_BANK):
+	for pb in get_pedalboards(bank):
+		print pb
+
+def list_all_pedalboards():
+	for pb in get_all_pedalboards():
 		print pb
 
 if sys.argv[1] == "next":
@@ -168,9 +199,16 @@ elif sys.argv[1] == "prev":
 elif sys.argv[1] == "bypass":
 	bypass_toggle()
 elif sys.argv[1] == "list":
-	list_pedalboards()
+	try:
+		list_pedalboards(int(sys.argv[2]))
+	except IndexError:
+		list_pedalboards()
+elif sys.argv[1] == "list-banks":
+	list_banks()
+elif sys.argv[1] == "list-boards":
+	list_all_pedalboards()
 elif sys.argv[1] == "index":
-	load_index(int(sys.argv[2]))
+	load_index(int(sys.argv[2]), 0)
 elif sys.argv[1] == "current":
 	print(get_current_pedalboard())
 elif sys.argv[1] == "load-board":
