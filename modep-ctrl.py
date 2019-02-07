@@ -94,7 +94,6 @@ def get_current_pedalboard_index(pedalboards, current):
 		return -1
 
 def load_next():
-	# get current bank?
 	boards = get_pedalboards(DEFAULT_BANK)
 	if len(boards) == 0:
 		print("No banks or pedalboards!")
@@ -106,7 +105,6 @@ def load_next():
 	set_pedalboard(boards[next])
 
 def load_prev():
-	# get current bank?
 	boards = get_pedalboards(DEFAULT_BANK)
 	if len(boards) == 0:
 		print("No banks or pedalboards!")
