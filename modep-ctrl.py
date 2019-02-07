@@ -94,6 +94,7 @@ def get_current_pedalboard_index(pedalboards, current):
 		return -1
 
 def load_next():
+	# get current bank?
 	boards = get_pedalboards(DEFAULT_BANK)
 	if len(boards) == 0:
 		print("No banks or pedalboards!")
@@ -105,6 +106,7 @@ def load_next():
 	set_pedalboard(boards[next])
 
 def load_prev():
+	# get current bank?
 	boards = get_pedalboards(DEFAULT_BANK)
 	if len(boards) == 0:
 		print("No banks or pedalboards!")
@@ -119,7 +121,7 @@ def load_prev():
 	set_pedalboard(boards[prev])
 
 def load_index(index, load_all):
-	if load_all == 0:
+	if load_all == False:
 		boards = get_pedalboards(DEFAULT_BANK)
 	else:
 		boards = get_all_pedalboards()
@@ -170,7 +172,7 @@ def get_board_index_by_bundle(board_bundle):
 def load_board_by_name(board_name):
         bundle = board_name_bundle(board_name)
 	if bundle:
-		load_index(get_board_index_by_bundle(bundle), 1)
+		load_index(get_board_index_by_bundle(bundle), True)
 	else:
 		print("No board found for %s!" % (board_name))
 
@@ -207,7 +209,7 @@ elif sys.argv[1] == "list-banks":
 elif sys.argv[1] == "list-boards":
 	list_all_pedalboards()
 elif sys.argv[1] == "index":
-	load_index(int(sys.argv[2]), 0)
+	load_index(int(sys.argv[2]), False)
 elif sys.argv[1] == "current":
 	print(get_current_pedalboard())
 elif sys.argv[1] == "load-board":
