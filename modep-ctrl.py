@@ -119,10 +119,10 @@ def load_prev():
 	set_pedalboard(boards[prev])
 
 def load_index(index, load_all):
-	if load_all == False:
-		boards = get_pedalboards(DEFAULT_BANK)
-	else:
+	if load_all == True:
 		boards = get_all_pedalboards()
+	else:
+		boards = get_pedalboards(DEFAULT_BANK)
 
 	if len(boards) == 0:
 		print("No banks or pedalboards!")
