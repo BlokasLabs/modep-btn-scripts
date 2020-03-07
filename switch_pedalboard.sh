@@ -25,7 +25,7 @@ CUR_DIR=$(dirname $(readlink -f $0))
 log "pisound button clicked $1 times!"
 
 log "Loading `expr $1 - 1`"
-python $CUR_DIR/modep-ctrl.py index `expr $1 - 1`
+$CUR_DIR/modep-ctrl.py index `expr $1 - 1`
 
 if [ $? -eq 0 ]; then
 	for i in $(seq 1 $1); do
