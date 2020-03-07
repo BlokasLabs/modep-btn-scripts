@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import requests
 import json
@@ -168,7 +168,7 @@ def get_board_index_by_bundle(board_bundle):
 	return None
 
 def load_board_by_name(board_name):
-        bundle = board_name_bundle(board_name)
+	bundle = board_name_bundle(board_name)
 	if bundle:
 		load_index(get_board_index_by_bundle(bundle), True)
 	else:
@@ -185,11 +185,11 @@ def list_banks():
 
 def list_pedalboards(bank = DEFAULT_BANK):
 	for pb in get_pedalboards(bank):
-		print pb
+		print(pb)
 
 def list_all_pedalboards():
 	for pb in get_all_pedalboards():
-		print pb
+		print(pb)
 
 if sys.argv[1] == "next":
 	load_next()
