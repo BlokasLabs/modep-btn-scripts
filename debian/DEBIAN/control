@@ -3,7 +3,7 @@ Priority: optional
 Homepage: https://blokas.io/modep
 Standards-Version: 3.9.2
 Package: modep-btn-scripts
-Version: 1.1.0-1
+Version: 1.2.0-1
 Architecture: all
 Maintainer: Blokas <hello@blokas.io>
 Depends: pisound-btn (>= 1.11-1)

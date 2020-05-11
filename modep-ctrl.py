@@ -13,7 +13,7 @@ SERVER_URI         = "http://localhost:80/"
 
 LOCAL_STORAGE      = os.path.expanduser("~/.modep/")
 LAST_PEDALBOARD    = LOCAL_STORAGE + "last_board"
-DEFAULT_PEDALBOARD = "/usr/local/modep/.pedalboards/default.pedalboard"
+DEFAULT_PEDALBOARD = "/var/modep/pedalboards/default.pedalboard"
 DEFAULT_BANK       = 0
 
 if not os.path.exists(LOCAL_STORAGE):
@@ -81,7 +81,7 @@ def get_current_pedalboard():
 			if r.content == DEFAULT_PEDALBOARD:
 				return ""
 			else:
-				return r.content
+				return r.content.decode('utf-8')
 		else:
 			print("Failed getting current board with err %u" % r.status_code)
 	except:
