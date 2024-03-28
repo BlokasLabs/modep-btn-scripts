@@ -1,3 +1,4 @@
+echo Setting Pisound Button config to use MODEP bindings.
 if [ -e /etc/pisound.conf ]; then
 	if [ ! -L /etc/pisound.conf ]; then
 		mv /etc/pisound.conf /usr/local/etc/pisound.conf.bak.`date +"%F.%T"`

@@ -1,0 +1,5 @@
+if [ -e /etc/pisound.conf ] && [ -L /etc/pisound.conf ] && [ "$(readlink /etc/pisound.conf)" = "/usr/local/etc/modep-btn.conf" ]; then
+	echo Restoring Pisound Button config...
+	unlink /etc/pisound.conf
+	ln -s /usr/local/etc/pisound.conf /etc/pisound.conf
+fi
